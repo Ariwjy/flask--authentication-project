@@ -27,6 +27,7 @@ class User(db.Model):
     email = db.Column(db.String(100), unique = True, nullable = False)
     password = db.Column(db.String(100), nullable = False)
     name = db.Column(db.String(255))
+    company = db.Column(db.String(255))
     phone = db.Column(db.Integer)
 
 
@@ -148,6 +149,7 @@ def logout():
     session.pop("id", None)
     return redirect(url_for("home"))
 
+#uploads
 @app.route("/uploads")
 def uploads():
         return render_template("upload.html")
@@ -165,6 +167,32 @@ def upload():
 
     file.save('uploads/' + file.filename)
     return 'File uploaded successfully'
+
+#update
+@app.route("/update", methods=['POST'])
+def update():
+    if "user" in session:
+        id = session["id"]
+        user = User.query.get(id)
+        
+        if user:
+            user.username = request.form.get("username")
+            user.name = request.form.get("name")
+            user.email = request.form.get("email")
+            user.company = request.form.get("company")
+            user.phone = request.form.get("phone")
+            
+            try:
+                db.session.commit()
+                flash("Update Successfully", "success")
+                return redirect(url_for("user"))
+
+            except Exception as e:
+                db.session.rollback()
+                flash(f"An error occurred: {str(e)}", "danger")
+                
+    return redirect(url_for("user"))
+
 
 
 if __name__ == "__main__":

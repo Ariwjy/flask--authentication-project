@@ -194,6 +194,41 @@ def update():
     return redirect(url_for("user"))
 
 
+#change password
+@app.route("/change", methods=['POST'])
+def change():
+    if "user" in session:
+        id = session["id"]
+        user = User.query.get(id)
+        
+        if user:
+            Cupassword = request.form["Cuusername"]
+            newpassword1 = request.form["newusername1"]
+            newpassword2 = request.form["newusername2"] 
+            if bcrypt.checkpw(Cupassword.encode('utf-8'), user.password.encode('utf-8')):            
+                if newpassword1 != newpassword2:
+                    flash("new passwords do not match!", "danger")
+                else:
+                    hashed = bcrypt.hashpw(newpassword1.encode('utf-8'), bcrypt.gensalt())
+                    user.password = hashed.decode('utf-8')
+                    try:
+                        db.session.commit()
+                        flash("Update Successfully", "success")
+                        return redirect(url_for("user"))    
+
+                    except Exception as e:
+                        db.session.rollback()
+                        flash(f"An error occurred: {str(e)}", "danger")
+            else:
+                flash("Current password is incorrect", "danger")
+                return redirect(url_for("user") + "#account-change-password")
+
+    return redirect(url_for("user"))
+
+                    
+
+        
+        
 
 if __name__ == "__main__":
     app. run (debug=True)

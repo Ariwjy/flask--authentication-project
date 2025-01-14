@@ -23,7 +23,7 @@
 
 <body>
     <div class="container light-style flex-grow-1 container-p-y">
-        <form class="card overflow-hidden" method="post" action="{{ url_for('update') }}">
+        <div class="card overflow-hidden">
             <div class="row no-gutters row-bordered row-border-light">
                 <div class="col-md-3 pt-0">
                     <div class="list-group list-group-flush account-settings-links">
@@ -41,7 +41,7 @@
                 </div>
                 <div class="col-md-9">
                     <div class="tab-content">
-                        <div class="tab-pane fade active show" id="account-general">
+                        <form class="tab-pane fade active show" id="account-general" method="post" action="{{ url_for('update') }}">
                             <div class="card-body media align-items-center">
                                 <img src="{{ url_for('static', filename='image/logo.png') }}" alt="my-avatar" class="d-block ui-w-80"/>
                                 <div class="media-body ml-4">
@@ -76,23 +76,31 @@
                                     <input type="text" name="phone" class="form-control" value="{{user.phone}}">
                                 </div>
                             </div>
-                        </div>
-                        <div class="tab-pane fade" id="account-change-password">
+                            <div class="d-flex justify-content-center pb-3">
+                                <button type="submit" class="btn btn-primary" id="submit" input type="submit" value="submit">Save changes</button>&nbsp;
+                                <button type="button" class="btn btn-default">Cancel</button>
+                            </div>
+                        </form>
+                        <form class="tab-pane fade" id="account-change-password" method="post" action="{{ url_for('change') }}">
                             <div class="card-body pb-2">
                                 <div class="form-group">
                                     <label class="form-label">Current password</label>
-                                    <input type="password" class="form-control">
+                                    <input type="password" name ="Cuusername" class="form-control" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">New password</label>
-                                    <input type="password" class="form-control">
+                                    <input type="password" name ="newusername1" class="form-control" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Repeat new password</label>
-                                    <input type="password" class="form-control">
+                                    <label class="form-label">Repeat new password</label required>
+                                    <input type="password" name ="newusername2"class="form-control">
                                 </div>
                             </div>
-                        </div>
+                            <div class="d-flex justify-content-center pb-3">
+                                <button type="submit" class="btn btn-primary" id="submit" input type="submit" value="submit">Save changes</button>&nbsp;
+                                <button type="button" class="btn btn-default">Cancel</button>
+                            </div>
+                        </form>
                         <div class="tab-pane fade" id="account-info">
                             <div class="card-body pb-2">
                                 <div class="form-group">
@@ -210,11 +218,7 @@
                     </div>
                 </div>
             </div>
-            <div class="d-flex justify-content-center pb-3">
-                <button type="submit" class="btn btn-primary" id="submit" input type="submit" value="submit">Save changes</button>&nbsp;
-                <button type="button" class="btn btn-default">Cancel</button>
-            </div>
-        </form>
+        </div>
        
     </div>
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>

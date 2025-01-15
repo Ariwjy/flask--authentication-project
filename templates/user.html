@@ -1,14 +1,7 @@
 {% extends "base.html"%}
 {%block title%}User Page{%endblock%}
 {%block content%}
-<!-- {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for msg in messages %}
-                <p>{{msg}}</p>
-            {% endfor %}    
-        {% endif %}
-    {% endwith %}
-    <h1>Welcome, {{user}}</h1> -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,7 +9,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/user.css')}}">
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 
     <title>Document</title>
 </head>
@@ -41,39 +33,40 @@
                 </div>
                 <div class="col-md-9">
                     <div class="tab-content">
-                        <form class="tab-pane fade active show" id="account-general" method="post" action="{{ url_for('update') }}">
-                            <div class="card-body media align-items-center">
-                                <img src="{{ url_for('static', filename='image/logo.png') }}" alt="my-avatar" class="d-block ui-w-80"/>
-                                <div class="media-body ml-4">
-                                    <label class="btn btn-outline-primary">
-                                        Upload new photo
-                                        <input type="file" class="account-settings-fileinput">
-                                    </label> &nbsp
-                                    <button type="button" class="btn btn-default md-btn-flat">Reset</button>
-                                    <div class="text-light small mt-1">Allowed JPG, GIF or PNG. Max size of 800K</div>
+                        <form class="tab-pane fade active show" id="account-general" method="post" action="{{ url_for('update') }}" enctype="multipart/form-data">
+                                <div class="card-body media" style="align-items: center; justify-content:center;">
+                                    <img src="{{ url_for('static', filename='image/' + user.photo if user.photo else 'image/logo.png') }}" alt="my-avatar" class="d-block ui-w-80"/>
+                                    <div class="media-body ml-4">
+                                        <label class="btn btn-outline-primary">
+                                            Upload new photo
+                                            <input type="file" class="account-settings-fileinput" name="photo" onchange="updatePhotoName(this)">
+                                        </label> &nbsp
+                                        <div class="text-light small mt-1" >
+                                            <input type="text" name ="photo" class="text-light small mt-1" value="{{user.photo}}" readonly id="photo-name" style="border: none; background: transparent; pointer-events: none;">
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
                             <hr class="border-light m-0">
                             <div class="card-body">
                                 <div class="form-group">
                                     <label class="form-label">Username</label>
-                                    <input type="text" name ="username" class="form-control mb-1" value="{{user.username}}">
+                                    <input type="text" name ="username" class="form-control mb-1" value="{{ temp_data['username'] if temp_data else user.username }}">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Name</label>
-                                    <input type="text" name ="name" class="form-control" value="{{user.name}}">
+                                    <input type="text" name ="name" class="form-control" value="{{ temp_data['name'] if temp_data else user.name }}">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">E-mail</label>
-                                    <input type="text" name ="email" class="form-control mb-1" value="{{user.email}}">
+                                    <input type="text" name ="email" class="form-control mb-1" value="{{ temp_data['email'] if temp_data else user.email }}">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Company</label>
-                                    <input type="text" name ="company" class="form-control" value="{{user.company}}">
+                                    <input type="text" name ="company" class="form-control" value="{{ temp_data['company'] if temp_data else user.company }}">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Phone</label>
-                                    <input type="text" name="phone" class="form-control" value="{{user.phone}}">
+                                    <input type="text" name="phone" class="form-control" value="{{ temp_data['phone'] if temp_data else user.phone }}">
                                 </div>
                             </div>
                             <div class="d-flex justify-content-center pb-3">
@@ -221,10 +214,24 @@
         </div>
        
     </div>
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript"></script>
+    <script>
+        function updatePhotoName(input) {
+            var fileName = input.files[0] ? input.files[0].name : '';
+            var photoInput = document.getElementById('photo-name');
+            if (fileName) {
+                photoInput.value = fileName;
+            } else {
+                photoInput.value = '{{ user.photo }}'; // Menampilkan nama foto lama jika tidak ada file baru
+            }
+        }
+
+
+        
+    </script>
+    
 </body>
 
 </html>

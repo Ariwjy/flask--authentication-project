@@ -1,13 +1,6 @@
 {% extends "base.html"%}
 {%block title%}Sign Up Page{%endblock%}
 {%block content%}
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-{% for msg in messages %}
-<p>{{msg}}</p>
-{% endfor %}
-{% endif %}
-{% endwith %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -67,9 +60,4 @@
 
 </html>
 
-<!-- <form action="#" method="post">
-    <p> username : </p>
-    <p><input type="text" username="nm" /></p>
-    <p><input type="submit" value="submit" /></p>
-</form> -->
 {%endblock%}

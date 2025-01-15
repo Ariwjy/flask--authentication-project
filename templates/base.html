@@ -35,18 +35,29 @@
             <li>
                 <a href="/">Home</a>
             </li>
+            {% if "user" in session %}
             <li>
-                <a href="#">Contact</a>
+                <a href="/user">Profile</a>
             </li>
+            <li>
+                <a href="/userdata">User Data</a>
+            </li>   
+            {% endif %}
+            
             <li>
                 <a href="#">About us</a>
             </li>
             <li>
                 <a href="#">Work</a>
             </li>
-            <li>
-                <a href="#">Tech Stack</a>
-            </li>
+            {% if "user" in session %}
+                {% if user.role_id == 1%}
+                    <li>
+                        <a href="/userdata">User Data</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+            
             <li>
                 {% if "user" in session %}
                 <a href="/logout">Logout</a>

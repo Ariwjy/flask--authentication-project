@@ -1,0 +1,87 @@
+.btn-outline-primary {
+    border-color: #26B4FF;
+    background  : transparent;
+    color       : #26B4FF;
+}
+
+.btn-default {
+    border-color: rgba(24, 28, 33, 0.1);
+    background  : rgba(0, 0, 0, 0);
+    color       : #4E5155;
+}
+
+.btn {
+    cursor: pointer;
+}
+
+.account-settings-fileinput {
+    position  : absolute;
+    visibility: hidden;
+    width     : 1px;
+    height    : 1px;
+    opacity   : 0;
+}
+.ui-w-80 {
+    width: 120px;  
+    height: 120px; 
+    border-radius: 50%; 
+    margin-bottom: 15px;
+}
+
+input{
+    display: flex;
+    width: 300px;
+    height: 35px;
+    font-size: 15px;
+}
+
+.form-wrapper{
+    width: 450px;
+    display:flex;   
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(119, 119, 119, 0.075);
+}
+
+.card-body.media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.media-body {
+    text-align: center;
+}
+
+.button .btn{
+    width: 70px;  
+}
+
+/* Form Popup (default hidden) */
+.form-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 500px;
+    padding: 20px;
+}
+
+/* Close button in the top-right corner */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+    background: transparent;
+    border: none;
+    color: #333;
+    cursor: pointer;
+}

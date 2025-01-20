@@ -260,60 +260,92 @@ def update():
             email = request.form.get("email")
             company = request.form.get("company")
             phone = request.form.get("phone")
+            photo = request.form.get("photo")
+
             file = request.files.get("photo")
 
-            # Validasi username
-            existing_username = User.query.filter_by(username=username).first()
-            if existing_username and existing_username.id != user.id:  # Pastikan bukan user yang sama
-                flash("Username is already taken!", "danger")
-                return render_template("user.html", user=user, temp_data={
-                    "username": username,
-                    "name": name,
-                    "email": email,
-                    "company": company,
-                    "phone": phone,
-                })
+            # original_data = {
+            #     "username": user.username,
+            #     "name": user.name,
+            #     "email": user.email,
+            #     "company": user.company,
+            #     "phone": user.phone,
+            #     "photo": user.photo
+            # }
+            
+            if username and username != user.username:
+                # Jika berubah, cek apakah username sudah ada pada user lain
+                existing_username = User.query.filter_by(username=username).first()
+                if existing_username and existing_username.id != user.id:  # Pastikan bukan user yang sama
+                    flash("Username is already taken!", "danger")
+                    return render_template("user.html", user=user, temp_data={
+                        "username": username,
+                        "name": name,
+                        "email": email,
+                        "company": company,
+                        "phone": phone,
+                    })
+                user.username = username  # Jika tidak ada konflik, perbarui username
 
-            # Validasi email
-            existing_email = User.query.filter_by(email=email).first()
-            if existing_email and existing_email.id != user.id:  # Pastikan bukan user yang sama
-                flash("Email is already taken!", "danger")
-                return render_template("user.html", user=user, temp_data={
-                    "username": username,
-                    "name": name,
-                    "email": email,
-                    "company": company,
-                    "phone": phone,
-                })
+            # Cek apakah name berubah
+            if name and name != user.name:
+                user.name = name  # Jika tidak ada konflik, perbarui name
 
-            # Validasi phone
-            existing_phone = User.query.filter_by(phone=phone).first()
-            if existing_phone and existing_phone.id != user.id:  # Pastikan bukan user yang sama
-                flash("Phone number is already taken!", "danger")
-                return render_template("user.html", user=user, temp_data={
-                    "username": username,
-                    "name": name,
-                    "email": email,
-                    "company": company,
-                    "phone": phone,
-                })
+            # Cek apakah email berubah
+            if email and email != user.email:
+                # Jika berubah, cek apakah email sudah ada pada user lain
+                existing_email = User.query.filter_by(email=email).first()
+                if existing_email and existing_email.id != user.id:  # Pastikan bukan user yang sama
+                    flash("Email is already taken!", "danger")
+                    return render_template("user.html", user=user, temp_data={
+                        "username": username,
+                        "name": name,
+                        "email": email,
+                        "company": company,
+                        "phone": phone,
+                    })
+                user.email = email  # Jika tidak ada konflik, perbarui email
 
-            # Update data user
-            user.username = username
-            user.name = name
-            user.email = email
-            user.company = company
-            user.phone = phone
+
+            # Cek apakah company berubah
+            if company and company != user.company:
+                user.company = company  # Jika tidak ada konflik, perbarui company
+
+                
+          # Jika tidak ada konflik, perbarui company
+
+            # Cek apakah phone berubah
+            if phone and phone != user.phone:
+                flash("username")
+                # Jika berubah, cek apakah phone sudah ada pada user lain
+                existing_phone = User.query.filter_by(phone=phone).first()
+                if existing_phone and existing_phone.id != user.id:  # Pastikan bukan user yang sama
+                    flash("Phone number is already taken!", "danger")
+                    return render_template("user.html", user=user, temp_data={
+                        "username": username,
+                        "name": name,
+                        "email": email,
+                        "company": company,
+                        "phone": phone,
+                    })
+                user.phone = phone
+
             
             # Simpan foto jika ada file yang diunggah
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                user.photo = filename
+                if photo and phone != user.photo:
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                    user.photo = filename
 
             try:
-                db.session.commit()
-                flash("Update Successfully", "success")
+                if not db.session.is_modified(user):
+                    # Tidak ada perubahan yang terdeteksi oleh SQLAlchemy
+                    flash("Nothing has changed", "info")
+                
+                else:
+                    db.session.commit()
+                    # flash("Update Successfully", "success")
                 
                 return render_template("user.html", user=user)  # overlay=True
             
@@ -329,7 +361,7 @@ def update():
                 })
 
     flash("You need to log in first!", "danger")
-    return redirect(url_for("login"))
+    return redirect(url_for("signin"))
 
 
 
@@ -377,8 +409,5 @@ def userdata():
         data = cur.fetchall()
         return render_template("userdata.html", user=user, data=data)
     
-      
-            
-
 if __name__ == "__main__":
     app. run (debug=True)

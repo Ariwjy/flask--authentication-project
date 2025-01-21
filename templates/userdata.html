@@ -34,7 +34,7 @@
                         {% for row in data %}
                         <tr>
                             {% if row[9] != True %}
-                            <td>{{loop.index - 2}}</td>
+                            <td>{{loop.index}}</td>
                             <td>{{ row[1] }}</td> <!-- Username -->
                             <td>{{ row[0] }}</td> <!-- User ID -->
                             <td>{{ row[4] }}</td> <!-- Name -->
@@ -52,10 +52,13 @@
                             {% endif %}
                         </tr>
                         {% endfor %}
+
                     </tbody>
                 </table>
+                <button type="submit" class="btn btn-secondary add-btn"  id="submit">Add</button>&nbsp;
             </div>
 
+            <!-- form data user -->
             <div class="form-popup" id="formPopup"  >
                 <div class="form-wrapper">
                     <!-- <button class="close-btn" onclick="closePopup()">×</button> -->
@@ -83,27 +86,27 @@
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Username</label>
-                                <input type="text" name="username" class="form-control mb-1" value="{{user.username}}">
+                                <input type="text" name="username" class="form-control mb-1" value="{{user.username}}"required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Name</label>
-                                <input type="text" name="name" class="form-control" value="{{user.name}}">
+                                <input type="text" name="name" class="form-control" value="{{user.name}}"required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">E-mail</label>
-                                <input type="email" name="email" class="form-control mb-1" value="{{user.email}}">
+                                <input type="email" name="email" class="form-control mb-1" value="{{user.email}}" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Company</label>
-                                <input type="text" name="company" class="form-control" value="{{user.company}}">
+                                <input type="text" name="company" class="form-control" value="{{user.company}}" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Phone</label>
-                                <input type="number" name="phone" class="form-control" value="{{user.phone}}">
+                                <input type="number" name="phone" class="form-control" value="{{user.phone}}" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Password</label>
-                                <input type="password" name="password" class="form-control" value="{{user.password}}">
+                                <input type="password" name="password" class="form-control" value="{{user.password}}" required>
                             </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2 pb-3">
@@ -115,6 +118,7 @@
                 </div>
             </div>
 
+            <!-- form delete data user -->
             <div class="form-popup" id="formdelete">
                 <div class="form-wrapper">
                     <form class="tab-pane fade active show" id="account-general" action="{{ url_for('delete') }}" method="post"
@@ -133,10 +137,51 @@
                     </form>
                 </div>
             </div>
+
+            <!-- form add data user -->
+            <div class="form-popup" id="formadd"  >
+                <div class="form-wrapper">
+                    <form class="tab-pane fade active show" id="account-general" action="{{ url_for('add') }}" method="post"
+                        enctype="multipart/form-data">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label">Username</label>
+                                <input type="text" name="username3" class="form-control mb-1" value="" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">name</label>
+                                <input type="text" name="name3" class="form-control mb-1" value="" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">E-mail</label>
+                                <input type="email" name="email3" class="form-control mb-1" value="" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone</label>
+                                <input type="number" name="phone3" class="form-control" value="" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password3" class="form-control" value="" required>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center mt-2 pb-3">
+                            <button type="submit" class="btn btn-primary" id="submit" input type="submit"
+                                value="submit">Add</button>&nbsp;
+                            <button type="button" class="btn btn-danger" onclick="closeadd()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
 
         <script>
             const editBtns = document.querySelectorAll('.edit-btn');
+            const deleteBtns = document.querySelectorAll('.delete-btn');
+            const addBtns = document.querySelectorAll('.add-btn');
+
+
             editBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     const userId = this.getAttribute('userid');
@@ -164,11 +209,8 @@
                 });
             });
     
-            function closePopup() {
-                document.getElementById('formPopup').style.display = 'none';
-            }
 
-            const deleteBtns = document.querySelectorAll('.delete-btn');
+
             deleteBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     const userId = this.getAttribute('userid2');                    
@@ -177,10 +219,33 @@
                 });
             });
 
+            addBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const username = this.getAttribute('username3');
+                    const email = this.getAttribute('email3');
+                    const password = this.getAttribute('password3');
+
+
+                    
+                    
+
+
+                    document.getElementById('formadd').style.display = 'block';
+                });
+            });
+    
+
             function closedelete() {
                 document.getElementById('formdelete').style.display = 'none';
             }
     
+            function closePopup() {
+                document.getElementById('formPopup').style.display = 'none';
+            }
+
+            function closeadd() {
+                document.getElementById('formadd').style.display = 'none';
+            }
         </script>
     </body>
 

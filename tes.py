@@ -303,7 +303,7 @@ def userdata():
         email = session["user"]
         user = User.query.filter_by(email=email).first()
         cur = conn.cursor()
-        cur.execute('SELECT * FROM public."user" INNER JOIN public."role" ON public."role".role_id = public."user".role_id ORDER BY id ASC ;')
+        cur.execute('SELECT * FROM public."user" INNER JOIN public."role" ON public."role".role_id = public."user".role_id ORDER BY public."role".role_id DESC ;')
         # cur.execute('SELECT * FROM public.user ORDER BY id ASC ')
         data = cur.fetchall()
         return render_template("userdata.html", user=user, data=data)
@@ -397,6 +397,42 @@ def delete():
         return redirect(url_for("userdata"))
     
     return redirect(url_for("userdata"))
+
+@app.route("/add", methods = ["POST", "GET"] )
+def add():
+    username = request.form["username3"]
+    name = request.form["name3"]
+    email = request.form["email3"]
+    phone = request.form["phone3"]
+    password = request.form["password3"]
+        
+    existing_username=User.query.filter_by(username=username).first()
+    if existing_username:
+        flash("Username is already taken!")
+        return redirect("/userdata")
+        
+    existing_email=User.query.filter_by(email=email).first()
+    if existing_email:
+        flash("Email is already taken!")
+        return redirect("/userdata")
+    
+    existing_phone=User.query.filter_by(phone=phone).first()
+    if existing_phone:
+        flash("Phone number is already taken!")
+        return redirect("/userdata")
+
+    try:
+        hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        new_user = User(username=username, name=name, email=email, phone=phone, password=hashed.decode('utf-8'))
+        db.session.add(new_user)
+        db.session.commit()
+        flash("Sign up successful!", "success")
+            
+        return redirect("/userdata")
+    except Exception as e:
+        flash(f"Error: {str(e)}", "danger")
+        return redirect("/userdata")
+    
     
 if __name__ == "__main__":
     app. run (debug=True)

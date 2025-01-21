@@ -225,6 +225,12 @@
                                 <label class="form-label">Password</label>
                                 <input type="password" name="password3" class="form-control" value="" required>
                             </div>
+                            {% if user.role_id == 1 %}
+                            <div class="form-group">
+                                <label class="form-label">Role</label>
+                                <input type="text" name="role3" class="form-control" value="" required>
+                            </div>
+                            {% endif %}
                         </div>
                         <div class="d-flex justify-content-center mt-2 pb-3">
                             <button type="submit" class="btn btn-primary" id="submit" input type="submit"
@@ -303,6 +309,8 @@
                     const username = this.getAttribute('username3');
                     const email = this.getAttribute('email3');
                     const password = this.getAttribute('password3');
+                    const role = this.getAttribute('role3');
+
 
 
                     

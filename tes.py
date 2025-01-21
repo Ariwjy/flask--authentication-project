@@ -366,7 +366,7 @@ def edit():
         hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         user.password = hashed.decode('utf-8')
         
-    if isRole:
+  
         role = Role.query.filter_by(isRole=isRole).first()
         if not role:
             flash("The specified role does not exist!", "danger")
@@ -433,6 +433,17 @@ def add():
     email = request.form["email3"]
     phone = request.form["phone3"]
     password = request.form["password3"]
+    isRole = request.form["role3"].lower()
+
+    role = Role.query.filter_by(isRole=isRole).first()
+    if isRole and isRole != role.role_id:
+        if isRole.lower() == "admin":
+            role_id = 2
+        elif isRole.lower() == "user":
+            role_id = 3
+        else:
+            flash("There is no name for that role", "danger")
+            return redirect(url_for("userdata"))
         
     existing_username=User.query.filter_by(username=username).first()
     if existing_username:
@@ -451,7 +462,7 @@ def add():
 
     try:
         hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        new_user = User(username=username, name=name, email=email, phone=phone, password=hashed.decode('utf-8'))
+        new_user = User(username=username, name=name, email=email, phone=phone, password=hashed.decode('utf-8'), role_id=role_id)
         db.session.add(new_user)
         db.session.commit()
         flash("Sign up successful!", "success")

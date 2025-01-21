@@ -37,7 +37,7 @@ class User(db.Model):
     name = db.Column(db.String(255), nullable = False, default = "John Doe")
     company = db.Column(db.String(255), nullable = False, default = "Ltd")
     phone = db.Column(db.Integer, nullable =False, default = 62)
-    role_id = db.Column(db.Integer, db.ForeignKey('role.role_id'), nullable =False, default = 2)
+    role_id = db.Column(db.Integer, db.ForeignKey('role.role_id'), nullable =False, default = 3)
     photo = db.Column(db.String(255), nullable = False, default = "logo.png")
 
     
@@ -50,14 +50,14 @@ def allowed_file(filename):
 class Role(db.Model):
     __tablename__="role"
     role_id = db.Column(db.Integer, primary_key=True, nullable =False)
-    isAdmin = db.Column(db.Boolean, nullable = False)
+    isRole = db.Column(db.String(100), nullable = False)
     action = db.Column(db.String(100), nullable = False)
 
 
 #route ke halaman home
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return render_template("index.html", user=user)
 
 #sign in
 @app.route("/signin", methods=["GET", "POST"])
@@ -300,13 +300,23 @@ def change():
 @app.route("/userdata", methods=["POST", "GET"])
 def userdata():
     if "user" in session: 
-        email = session["user"]
-        user = User.query.filter_by(email=email).first()
+        username = session["user"]
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            flash("User not found!", "danger")
+            return redirect(url_for("user"))
+
+        if user.role_id != 1:
+            flash("You are not authorized to view this page.", "danger")
+            return redirect(url_for("user"))
+        
         cur = conn.cursor()
         cur.execute('SELECT * FROM public."user" INNER JOIN public."role" ON public."role".role_id = public."user".role_id ORDER BY public."role".role_id DESC ;')
         # cur.execute('SELECT * FROM public.user ORDER BY id ASC ')
         data = cur.fetchall()
         return render_template("userdata.html", user=user, data=data)
+    flash("You need to log in first!", "danger")
+    return redirect(url_for("signin"))
     
 @app.route("/edit",  methods=["POST", "GET"])
 def edit():
@@ -317,6 +327,7 @@ def edit():
     company = request.form.get("company")
     phone = request.form.get("phone")
     password = request.form.get("password")
+    isRole = request.form.get("role").lower()
     file = request.files.get("photo")
     
     user = User.query.filter_by(id=id).first()
@@ -354,14 +365,31 @@ def edit():
     if password and password != user.password:
         hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         user.password = hashed.decode('utf-8')
+        
+    if isRole:
+        role = Role.query.filter_by(isRole=isRole).first()
+        if not role:
+            flash("The specified role does not exist!", "danger")
+            return redirect(url_for("userdata"))
+        
+        if isRole and isRole != role.role_id:
+            if isRole.lower() == "admin":
+                user.role_id = 2
+            elif isRole.lower() == "user":
+                user.role_id = 3
+            else:
+                flash("There is no name for that role", "danger")
+                return redirect(url_for("userdata"))
 
-    # if user.photo != photo:
-    # user.photo = file
+            
 
-    # if user.password != password:
-    # user.password = password.encode('utf-8'), bcrypt.gensalt() # Encrypt password
-    #     is_updated = True
-
+    
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        user.photo = filename
+        if filename != user.photo:
+            user.photo = filename
     try:
         if not db.session.is_modified(user):
             flash("Nothing has changed", "info")

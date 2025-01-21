@@ -18,6 +18,8 @@
             <div class="table-responsive">
                 <table class="table table-bordered" style="text-align: center;">
                     <thead>
+                        {% if user.role_id == 2 %}
+
                         <tr>
                             <th>No</th>
                             <th>Username</th>
@@ -29,11 +31,28 @@
                             <!-- <th>Is Admin</th> -->
                             <th>Action</th>
                         </tr>
+                        {% elif user.role_id == 1 %}
+                        <tr>
+                            <th>No</th>
+                            <th>Username</th>
+                            <th>User ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Company</th>
+                            <th>Phone</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                        </tr>
+                        {% endif %}
+
+
                     </thead>
                     <tbody>
+                        {% if user.role_id == 2 %}
+
                         {% for row in data %}
                         <tr>
-                            {% if row[9] != True %}
+                            {% if row[10] == "admin" %}
                             <td>{{loop.index}}</td>
                             <td>{{ row[1] }}</td> <!-- Username -->
                             <td>{{ row[0] }}</td> <!-- User ID -->
@@ -45,13 +64,46 @@
                             <td>
                                 <div class="button d-flex justify-content-center ">
                                     <button type="submit" class="btn btn-primary edit-btn", id="submit",
-                                    username="{{row[1]}}", userid="{{row[0]}}", name="{{row[4]}}", email="{{row[2]}}", company="{{row[6]}}", phone="{{row[5]}}", photo="{{row[8]}}" password="{{row[3]}}">Edit</button>&nbsp;                                  
+                                    username="{{row[1]}}", userid="{{row[0]}}", name="{{row[4]}}", email="{{row[2]}}", company="{{row[6]}}", phone="{{row[5]}}", photo="{{row[8]}}" password="{{row[3]}}" role_id="{{row[9]}}">Edit</button>&nbsp;                                  
+                                    <button type="submit" class="btn btn-danger delete-btn" userid2="{{row[0]}}" id="submit">Delete</button>&nbsp;
+                                </div>
+                            </td> <!-- Button -->
+                            {% endif %}
+
+
+                        </tr>
+                        {% endfor %}
+                        {% elif user.role_id == 1 %}
+                        {% for row in data %}
+                        <tr>
+                            {% if row[10] != "owner" %}
+                            <td>{{loop.index}}</td>
+                            <td>{{ row[1] }}</td> <!-- Username -->
+                            <td>{{ row[0] }}</td> <!-- User ID -->
+                            <td>{{ row[4] }}</td> <!-- Name -->
+                            <td>{{ row[2] }}</td> <!-- Email -->
+                            <td>{{ row[6] }}</td> <!-- Company -->
+                            <td>{{ row[5] }}</td> <!-- Phone -->
+                            {% if row[9] == 2 %}
+                            <td>Admin</td> 
+                            {% elif row[9] == 3 %}
+                            <td>User</td> 
+                            {% endif %}
+
+
+                            <td>
+                                <div class="button d-flex justify-content-center ">
+                                    <button type="submit" class="btn btn-primary edit-btn", id="submit",
+                                    username="{{row[1]}}", userid="{{row[0]}}", name="{{row[4]}}", email="{{row[2]}}", company="{{row[6]}}", phone="{{row[5]}}", photo="{{row[8]}}" password="{{row[3]}}" roleid="{{row[9]}}", role = "{{row[10]}}">Edit</button>&nbsp;                                  
                                     <button type="submit" class="btn btn-danger delete-btn" userid2="{{row[0]}}" id="submit">Delete</button>&nbsp;
                                 </div>
                             </td> <!-- Button -->
                             {% endif %}
                         </tr>
                         {% endfor %}
+                        {% endif %}
+
+
 
                     </tbody>
                 </table>
@@ -65,14 +117,16 @@
                     <form class="tab-pane fade active show" id="account-general" action="{{ url_for('edit') }}" method="post"
                         enctype="multipart/form-data">
                         <div class="card-body media" style="align-items: center; justify-content:center;">
-                            <img src="{{ url_for('static', filename='image/' + user.photo if user.photo else 'image/logo.png') }}" alt="my-avatar" class="d-block ui-w-80"/>
+                            
                             <div class="media-body ml-4">
+                                <img name="image" src="" alt="my-avatar" class="d-block ui-w-80 mb-2 mt-2" style="display: block; margin: 0 auto;"/>
+
                                 <label class="btn btn-outline-primary">
-                                    Upload new photo
+                                    Upload new photo    
                                     <input type="file" class="account-settings-fileinput" name="photo" onchange="updatePhotoName(this)">
                                 </label> &nbsp
                                 <div class="text-light small mt-1" >
-                                    <input type="text" name="photos" class="form-control mb-1" value="{{user.photo}}" style="border: none; background: transparent; pointer-events: none; text-align: center;">
+                                    <input id="photo-name" type="text" name="photos" class="form-control mb-1" value="" style="border: none; background: transparent; pointer-events: none; text-align: center;">
 
                                     <!-- <input type="text" name ="photo" class="text-light small mt-1" value="{{user.photo}}" readonly id="photo-name" style="border: none; background: transparent; pointer-events: none;"> -->
                                 </div>
@@ -82,32 +136,39 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <label class="form-label">ID</label>
-                                <input type="number" name="id" class="form-control mb-1" value="{{user.userid}}" readonly>
+                                <input type="number" name="id" class="form-control mb-1" value="" readonly>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Username</label>
-                                <input type="text" name="username" class="form-control mb-1" value="{{user.username}}"required>
+                                <input type="text" name="username" class="form-control mb-1" value=""required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Name</label>
-                                <input type="text" name="name" class="form-control" value="{{user.name}}"required>
+                                <input type="text" name="name" class="form-control" value=""required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">E-mail</label>
-                                <input type="email" name="email" class="form-control mb-1" value="{{user.email}}" required>
+                                <input type="email" name="email" class="form-control mb-1" value="" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Company</label>
-                                <input type="text" name="company" class="form-control" value="{{user.company}}" required>
+                                <input type="text" name="company" class="form-control" value="" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Phone</label>
-                                <input type="number" name="phone" class="form-control" value="{{user.phone}}" required>
+                                <input type="number" name="phone" class="form-control" value="" required>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Password</label>
-                                <input type="password" name="password" class="form-control" value="{{user.password}}" required>
+                                <input type="password" name="password" class="form-control" value="" required>
                             </div>
+                            {% if user.role_id == 1 %}
+                            <div class="form-group">
+                                <label class="form-label">Role</label>
+                                <input type="text" name="role" class="form-control" value="" required>
+                            </div>
+                            {% endif %}
+
                         </div>
                         <div class="d-flex justify-content-center mt-2 pb-3">
                             <button type="submit" class="btn btn-primary" id="submit" input type="submit"
@@ -126,7 +187,7 @@
                         <div class="card-body"> 
                             <div class="form-group">
                                 <label class="form-label">Are you sure delete this account?</label>
-                                <input type="hidden" name="id2" class="form-control mb-1" value="{{user.userid}}" readonly>
+                                <input type="hidden" name="id2" class="form-control mb-1" value="" readonly>
                             </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2 pb-3">
@@ -181,6 +242,15 @@
             const deleteBtns = document.querySelectorAll('.delete-btn');
             const addBtns = document.querySelectorAll('.add-btn');
 
+            function updatePhotoName(input) {
+                var fileName = input.files[0] ? input.files[0].name : '';
+                var photoInput = document.getElementById('photo-name');
+                if (fileName) {
+                    photoInput.value = fileName;
+                } else {
+                    photoInput.value = '{{ user.photo }}'; 
+                }
+            }
 
             editBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -192,6 +262,7 @@
                     const phone = this.getAttribute('phone');
                     const photo = this.getAttribute('photo');
                     const password = this.getAttribute('password');
+                    const role = this.getAttribute('role')
 
 
                     
@@ -203,6 +274,14 @@
                     document.querySelector('input[name="phone"]').value = phone;
                     document.querySelector('input[name="photos"]').value = photo;
                     document.querySelector('input[name="password"]').value = password;
+                    document.querySelector('input[name="role"]').value = role;
+            
+                    const image = document.querySelector('img[name="image"]');
+                    if (photo) {
+                        image.src = "{{ url_for('static', filename='image/') }}" + photo; // Use the correct path to the image
+                    } else {
+                        image.src = "{{ url_for('static', filename='image/default.png') }}"; // Set default image if no photo exists
+                    }
 
 
                     document.getElementById('formPopup').style.display = 'block';

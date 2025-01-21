@@ -50,23 +50,23 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label class="form-label">Username</label>
-                                    <input type="text" name ="username" class="form-control mb-1" value="{{ temp_data['username'] if temp_data else user.username }}">
+                                    <input type="text" name ="username" class="form-control mb-1" value="{{ temp_data['username'] if temp_data else user.username }}" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Name</label>
-                                    <input type="text" name ="name" class="form-control" value="{{ temp_data['name'] if temp_data else user.name }}">
+                                    <input type="text" name ="name" class="form-control" value="{{ temp_data['name'] if temp_data else user.name }}" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">E-mail</label>
-                                    <input type="text" name ="email" class="form-control mb-1" value="{{ temp_data['email'] if temp_data else user.email }}">
+                                    <input type="email" name ="email" class="form-control mb-1" value="{{ temp_data['email'] if temp_data else user.email }}" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Company</label>
-                                    <input type="text" name ="company" class="form-control" value="{{ temp_data['company'] if temp_data else user.company }}">
+                                    <input type="text" name ="company" class="form-control" value="{{ temp_data['company'] if temp_data else user.company }}" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Phone</label>
-                                    <input type="text" name="phone" class="form-control" value="{{ temp_data['phone'] if temp_data else user.phone }}">
+                                    <input type="number" name="phone" class="form-control" value="{{ temp_data['phone'] if temp_data else user.phone }}" required>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-center pb-3">
@@ -224,7 +224,7 @@
             if (fileName) {
                 photoInput.value = fileName;
             } else {
-                photoInput.value = '{{ user.photo }}'; // Menampilkan nama foto lama jika tidak ada file baru
+                photoInput.value = '{{ user.photo }}'; 
             }
         }
 

@@ -46,7 +46,7 @@
                                 <div class="button d-flex justify-content-center ">
                                     <button type="submit" class="btn btn-primary edit-btn", id="submit",
                                     username="{{row[1]}}", userid="{{row[0]}}", name="{{row[4]}}", email="{{row[2]}}", company="{{row[6]}}", phone="{{row[5]}}", photo="{{row[8]}}" password="{{row[3]}}">Edit</button>&nbsp;
-                                    <button type="button" class="btn btn-danger">Delete</button>
+                                    <button type="submit" class="btn btn-danger delete-btn" userid="{{row[0]}}" id="submit">Delete</button>&nbsp;
                                 </div>
                             </td> <!-- Button -->
                             {% endif %}
@@ -58,9 +58,9 @@
 
             <div class="form-popup" id="formPopup"  >
                 <div class="form-wrapper">
-                    <button class="close-btn" onclick="closePopup()">×</button>
-                    <form class="tab-pane fade active show" id="account-general" action="{{ url_for('update') }}" method="post"
-                        action="{{ url_for('update') }}" enctype="multipart/form-data">
+                    <!-- <button class="close-btn" onclick="closePopup()">×</button> -->
+                    <form class="tab-pane fade active show" id="account-general" action="{{ url_for('edit') }}" method="post"
+                        enctype="multipart/form-data">
                         <div class="card-body media" style="align-items: center; justify-content:center;">
                             <img src="{{ url_for('static', filename='image/' + user.photo if user.photo else 'image/logo.png') }}" alt="my-avatar" class="d-block ui-w-80"/>
                             <div class="media-body ml-4">
@@ -69,7 +69,7 @@
                                     <input type="file" class="account-settings-fileinput" name="photo" onchange="updatePhotoName(this)">
                                 </label> &nbsp
                                 <div class="text-light small mt-1" >
-                                    <input type="text" name="photos" class="form-control mb-1" value="{{user.photo}}" style="border: none; background: transparent; pointer-events: none;">
+                                    <input type="text" name="photos" class="form-control mb-1" value="{{user.photo}}" style="border: none; background: transparent; pointer-events: none; text-align: center;">
 
                                     <!-- <input type="text" name ="photo" class="text-light small mt-1" value="{{user.photo}}" readonly id="photo-name" style="border: none; background: transparent; pointer-events: none;"> -->
                                 </div>
@@ -78,8 +78,7 @@
                         <hr class="border-light m-0">
                         <div class="card-body">
                             <div class="form-group">
-                                <label class="form-label">User ID</label>
-                                <input type="text" name="id" class="form-control mb-1" value="{{user.userid}}">
+                                <input type="number" name="id" class="form-control mb-1" value="{{user.userid}}" readonly>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Username</label>
@@ -91,7 +90,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="form-label">E-mail</label>
-                                <input type="text" name="email" class="form-control mb-1" value="{{user.email}}">
+                                <input type="email" name="email" class="form-control mb-1" value="{{user.email}}">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Company</label>
@@ -99,12 +98,28 @@
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Phone</label>
-                                <input type="text" name="phone" class="form-control" value="{{user.phone}}">
+                                <input type="number" name="phone" class="form-control" value="{{user.phone}}">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Password</label>
-                                <input type="text" name="password" class="form-control" value="{{user.password}}">
+                                <input type="password" name="password" class="form-control" value="{{user.password}}">
                             </div>
+                        </div>
+                        <div class="d-flex justify-content-center mt-2 pb-3">
+                            <button type="submit" class="btn btn-primary" id="submit" input type="submit"
+                                value="submit">Save changes</button>&nbsp;
+                            <button type="button" class="btn btn-danger" onclick="closePopup()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="form-popup" id="formdelete">
+                <div class="form-wrapper">
+                    <form class="tab-pane fade active show" id="account-general" action="{{ url_for('edit') }}" method="post"
+                        enctype="multipart/form-data">
+                        <div class="form-group">
+                            <input type="number" name="id" class="form-control mb-1" value="{{user.userid}}" readonly>
                         </div>
                         <div class="d-flex justify-content-center mt-2 pb-3">
                             <button type="submit" class="btn btn-primary" id="submit" input type="submit"
@@ -117,7 +132,6 @@
         </div>
 
         <script>
-            // Function to open the popup form and populate it with user data
             const editBtns = document.querySelectorAll('.edit-btn');
             editBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -132,7 +146,6 @@
 
 
                     
-                    // Populate the form with the selected user's data
                     document.querySelector('input[name="id"]').value = userId;
                     document.querySelector('input[name="username"]').value = username;
                     document.querySelector('input[name="name"]').value = name;
@@ -143,15 +156,33 @@
                     document.querySelector('input[name="password"]').value = password;
 
 
-    
-                    // Show the popup
                     document.getElementById('formPopup').style.display = 'block';
                 });
             });
     
-            // Function to close the popup form
             function closePopup() {
                 document.getElementById('formPopup').style.display = 'none';
+            }
+        </script>
+
+        <script>
+            const deleteBtns = document.querySelectorAll('.delete-btn');
+            deleteBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const userId = this.getAttribute('userid');
+
+
+
+                    
+                    document.querySelector('input[name="id"]').value = userId;
+
+
+                    document.getElementById('formdelete').style.display = 'block';
+                });
+            });
+    
+            function closePopup() {
+                document.getElementById('formdelete').style.display = 'none';
             }
         </script>
     </body>

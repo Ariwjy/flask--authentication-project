@@ -171,81 +171,7 @@ def logout():
     session.pop("user", None)
     session.pop("email", None)
     session.pop("id", None)
-    return redirect(url_for("home"))
-
-#uploads
-# @app.route("/uploads")
-# def uploads():
-#         return render_template("upload.html")
-
-# @app.route("/upload", methods = ['POST'])
-# def upload():
-
-#     if 'file' not in request.files:
-#         return 'No file part'
-    
-#     file = request.files['file']
-    
-#     if file.filename == '':
-#         return 'No selected file'
-
-#     file.save('uploads/' + file.filename)
-#     return 'File uploaded successfully'
-
-#update
-# @app.route("/update", methods=['POST'])
-# def update():
-#     if "user" in session:
-#         id = session["id"]
-#         user = User.query.get(id)
-        
-#         if user:
-#             user.username = request.form.get("username")
-#             user.name = request.form.get("name")
-#             user.email = request.form.get("email")
-#             user.company = request.form.get("company")
-#             user.phone = request.form.get("phone")
-#             file = request.files['photo']
-
-            
-#             username = request.form["username"]
-#             email = request.form["email"]
-#             phone = request.form["phone"]
-            
-#             existing_username=User.query.filter_by(username=username).first()
-#             if existing_username:
-#                 if username != user.username:
-#                     flash("Username is already taken!")
-#                     return redirect(url_for("user"))
-        
-#             existing_email=User.query.filter_by(email=email).first()
-#             if existing_email:
-#                 if email != user.email:
-#                     flash("Email is already taken!")
-#                     return redirect(url_for("user"))
-            
-#             existing_phone=User.query.filter_by(phone=phone).first()
-#             if existing_phone:
-#                 if email != user.email:
-#                     flash("Phone number is already taken!")
-#                     return redirect(url_for("user"))
-                
-#             if file and allowed_file(file.filename):
-#                 filename = secure_filename(file.filename)
-#                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-#                 user.photo = filename
-                
-            
-#             try:
-#                 db.session.commit()
-#                 flash("Update Successfully", "success")
-#                 return redirect(url_for("user"))
-
-#             except Exception as e:
-#                 db.session.rollback()
-#                 flash(f"An error occurred: {str(e)}", "danger")
-                
-#     return redirect(url_for("user"))    
+    return redirect(url_for("home"))   
 
 @app.route("/update", methods=['POST'])
 def update():
@@ -254,29 +180,16 @@ def update():
         user = User.query.get(id)
         
         if user:
-            # Ambil data dari form
             username = request.form.get("username")
             name = request.form.get("name")
             email = request.form.get("email")
             company = request.form.get("company")
             phone = request.form.get("phone")
-            photo = request.form.get("photo")
-
             file = request.files.get("photo")
-
-            # original_data = {
-            #     "username": user.username,
-            #     "name": user.name,
-            #     "email": user.email,
-            #     "company": user.company,
-            #     "phone": user.phone,
-            #     "photo": user.photo
-            # }
             
             if username and username != user.username:
-                # Jika berubah, cek apakah username sudah ada pada user lain
                 existing_username = User.query.filter_by(username=username).first()
-                if existing_username and existing_username.id != user.id:  # Pastikan bukan user yang sama
+                if existing_username and existing_username.id != user.id:  
                     flash("Username is already taken!", "danger")
                     return render_template("user.html", user=user, temp_data={
                         "username": username,
@@ -285,17 +198,14 @@ def update():
                         "company": company,
                         "phone": phone,
                     })
-                user.username = username  # Jika tidak ada konflik, perbarui username
-
-            # Cek apakah name berubah
+                user.username = username  
             if name and name != user.name:
-                user.name = name  # Jika tidak ada konflik, perbarui name
+                user.name = name  
 
-            # Cek apakah email berubah
             if email and email != user.email:
-                # Jika berubah, cek apakah email sudah ada pada user lain
+    
                 existing_email = User.query.filter_by(email=email).first()
-                if existing_email and existing_email.id != user.id:  # Pastikan bukan user yang sama
+                if existing_email and existing_email.id != user.id:  
                     flash("Email is already taken!", "danger")
                     return render_template("user.html", user=user, temp_data={
                         "username": username,
@@ -304,22 +214,18 @@ def update():
                         "company": company,
                         "phone": phone,
                     })
-                user.email = email  # Jika tidak ada konflik, perbarui email
+                user.email = email 
 
 
-            # Cek apakah company berubah
+            
             if company and company != user.company:
-                user.company = company  # Jika tidak ada konflik, perbarui company
+                user.company = company  
+          
 
-                
-          # Jika tidak ada konflik, perbarui company
-
-            # Cek apakah phone berubah
-            if phone and phone != user.phone:
-                flash("username")
-                # Jika berubah, cek apakah phone sudah ada pada user lain
+        
+            if phone is not None and str(phone) != str(user.phone):                
                 existing_phone = User.query.filter_by(phone=phone).first()
-                if existing_phone and existing_phone.id != user.id:  # Pastikan bukan user yang sama
+                if existing_phone and existing_phone.id != user.id:  
                     flash("Phone number is already taken!", "danger")
                     return render_template("user.html", user=user, temp_data={
                         "username": username,
@@ -330,24 +236,20 @@ def update():
                     })
                 user.phone = phone
 
-            
-            # Simpan foto jika ada file yang diunggah
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                if photo and phone != user.photo:
-                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                    user.photo = filename
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                user.photo = filename
 
             try:
                 if not db.session.is_modified(user):
-                    # Tidak ada perubahan yang terdeteksi oleh SQLAlchemy
                     flash("Nothing has changed", "info")
                 
                 else:
                     db.session.commit()
-                    # flash("Update Successfully", "success")
+                    flash("Update Successfully", "success")
                 
-                return render_template("user.html", user=user)  # overlay=True
+                return render_template("user.html", user=user)  
             
             except Exception as e:
                 db.session.rollback()
@@ -363,9 +265,6 @@ def update():
     flash("You need to log in first!", "danger")
     return redirect(url_for("signin"))
 
-
-
-#change password
 @app.route("/change", methods=['POST'])
 def change():
     if "user" in session:
@@ -408,6 +307,96 @@ def userdata():
         # cur.execute('SELECT * FROM public.user ORDER BY id ASC ')
         data = cur.fetchall()
         return render_template("userdata.html", user=user, data=data)
+    
+@app.route("/edit",  methods=["POST", "GET"])
+def edit():
+    id = request.form.get("id")
+    username =  request.form.get("username")
+    name = request.form.get("name")
+    email = request.form.get("email")
+    company = request.form.get("company")
+    phone = request.form.get("phone")
+    password = request.form.get("password")
+    file = request.files.get("photo")
+    
+    user = User.query.filter_by(id=id).first()
+    if not user:
+        flash("User not found!", "danger")
+        return redirect(url_for("userdata"))
+  
+    if username and username != user.username:
+        existing_username = User.query.filter_by(username=username).first()
+        if existing_username and existing_username.id != user.id:  
+            flash("Username is already taken!", "danger")
+            return redirect(url_for("userdata"))
+        user.username = username
+        
+    if email and email != user.email:
+        existing_email = User.query.filter_by(email=email).first()
+        if existing_email and existing_email.id != user.id:  
+            flash("Email is already taken!", "danger")
+            return redirect(url_for("userdata"))
+        user.email = email
+
+    if phone and str(phone) != str(user.phone):
+        existing_phone = User.query.filter_by(phone=phone).first()
+        if existing_phone and existing_phone.id != user.id:  
+            flash("Phone number is already taken!", "danger")
+            return redirect(url_for("userdata"))
+        user.phone = phone
+        
+    if name and name != user.name:
+        user.name = name
+
+    if company and company != user.company:
+        user.company = company
+
+    if password and password != user.password:
+        hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        user.password = hashed.decode('utf-8')
+
+    # if user.photo != photo:
+    # user.photo = file
+
+    # if user.password != password:
+    # user.password = password.encode('utf-8'), bcrypt.gensalt() # Encrypt password
+    #     is_updated = True
+
+    try:
+        if not db.session.is_modified(user):
+            flash("Nothing has changed", "info")
+                
+        else:
+            db.session.commit()
+            flash("Update Successfully", "success")
+                
+        return redirect(url_for("userdata"))
+            
+    except Exception as e:
+        db.session.rollback()
+        flash(f"An error occurred: {str(e)}", "danger")
+        return redirect(url_for("userdata"))
+
+    
+@app.route("/delete", methods = ["POST", "GET"] )
+def delete():
+    id = request.form.get("id")
+    user = User.query.filter_by(id=id).first()
+    
+    if not user:
+        flash("User not found!", "danger")
+        return redirect(url_for("userdata"))
+    try:
+        db.session.delete(user) 
+        db.session.commit()  
+        flash("User has been deleted successfully", "success")
+    
+    except:
+        db.session.rollback()
+        flash(f"An error occurred: {str(e)}", "danger")
+        return redirect(url_for("userdata"))
+    
+    return redirect(url_for("userdata"))
     
 if __name__ == "__main__":
     app. run (debug=True)

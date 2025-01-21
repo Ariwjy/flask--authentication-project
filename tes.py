@@ -380,7 +380,7 @@ def edit():
     
 @app.route("/delete", methods = ["POST", "GET"] )
 def delete():
-    id = request.form.get("id")
+    id = request.form.get("id2")    
     user = User.query.filter_by(id=id).first()
     
     if not user:
@@ -391,7 +391,7 @@ def delete():
         db.session.commit()  
         flash("User has been deleted successfully", "success")
     
-    except:
+    except Exception as e:
         db.session.rollback()
         flash(f"An error occurred: {str(e)}", "danger")
         return redirect(url_for("userdata"))

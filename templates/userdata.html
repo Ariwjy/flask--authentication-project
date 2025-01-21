@@ -45,8 +45,8 @@
                             <td>
                                 <div class="button d-flex justify-content-center ">
                                     <button type="submit" class="btn btn-primary edit-btn", id="submit",
-                                    username="{{row[1]}}", userid="{{row[0]}}", name="{{row[4]}}", email="{{row[2]}}", company="{{row[6]}}", phone="{{row[5]}}", photo="{{row[8]}}" password="{{row[3]}}">Edit</button>&nbsp;
-                                    <button type="submit" class="btn btn-danger delete-btn" userid="{{row[0]}}" id="submit">Delete</button>&nbsp;
+                                    username="{{row[1]}}", userid="{{row[0]}}", name="{{row[4]}}", email="{{row[2]}}", company="{{row[6]}}", phone="{{row[5]}}", photo="{{row[8]}}" password="{{row[3]}}">Edit</button>&nbsp;                                  
+                                    <button type="submit" class="btn btn-danger delete-btn" userid2="{{row[0]}}" id="submit">Delete</button>&nbsp;
                                 </div>
                             </td> <!-- Button -->
                             {% endif %}
@@ -78,6 +78,7 @@
                         <hr class="border-light m-0">
                         <div class="card-body">
                             <div class="form-group">
+                                <label class="form-label">ID</label>
                                 <input type="number" name="id" class="form-control mb-1" value="{{user.userid}}" readonly>
                             </div>
                             <div class="form-group">
@@ -116,15 +117,18 @@
 
             <div class="form-popup" id="formdelete">
                 <div class="form-wrapper">
-                    <form class="tab-pane fade active show" id="account-general" action="{{ url_for('edit') }}" method="post"
-                        enctype="multipart/form-data">
-                        <div class="form-group">
-                            <input type="number" name="id" class="form-control mb-1" value="{{user.userid}}" readonly>
+                    <form class="tab-pane fade active show" id="account-general" action="{{ url_for('delete') }}" method="post"
+                    enctype="multipart/form-data">
+                        <div class="card-body"> 
+                            <div class="form-group">
+                                <label class="form-label">Are you sure delete this account?</label>
+                                <input type="hidden" name="id2" class="form-control mb-1" value="{{user.userid}}" readonly>
+                            </div>
                         </div>
                         <div class="d-flex justify-content-center mt-2 pb-3">
                             <button type="submit" class="btn btn-primary" id="submit" input type="submit"
-                                value="submit">Save changes</button>&nbsp;
-                            <button type="button" class="btn btn-danger" onclick="closePopup()">Cancel</button>
+                                value="submit">Yes</button>&nbsp;
+                            <button type="button" class="btn btn-danger" onclick="closedelete()">No</button>
                         </div>
                     </form>
                 </div>
@@ -163,27 +167,20 @@
             function closePopup() {
                 document.getElementById('formPopup').style.display = 'none';
             }
-        </script>
 
-        <script>
             const deleteBtns = document.querySelectorAll('.delete-btn');
             deleteBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const userId = this.getAttribute('userid');
-
-
-
-                    
-                    document.querySelector('input[name="id"]').value = userId;
-
-
+                    const userId = this.getAttribute('userid2');                    
+                    document.querySelector('input[name="id2"]').value = userId;
                     document.getElementById('formdelete').style.display = 'block';
                 });
             });
-    
-            function closePopup() {
+
+            function closedelete() {
                 document.getElementById('formdelete').style.display = 'none';
             }
+    
         </script>
     </body>
 
